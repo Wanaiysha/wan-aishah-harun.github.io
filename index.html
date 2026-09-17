@@ -150,6 +150,20 @@
   /* ---------- Toolkit panel ---------- */
   .tk-intro{max-width:64ch;}
   .tk-grid{display:grid; grid-template-columns:1fr; gap:22px;}
+  .section-divider{margin-top:6px;}
+  .section-divider h2{margin-bottom:10px;}
+  .note-box{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold);
+    border-radius:8px; padding:18px 20px;
+  }
+  .note-box p{margin:0 0 10px; font-size:0.92rem; color:var(--text-dim);}
+  .note-box p:last-child{margin-bottom:0;}
+  .note-box em{font-style:italic; color:var(--text);}
+  .note-box p.formula{
+    font-family:var(--mono); font-size:0.85rem; color:var(--gold-deep);
+    background:var(--bg-soft); border:1px solid var(--border-soft); border-radius:6px;
+    padding:10px 12px; line-height:1.6;
+  }
   .panel-card{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
     padding:24px;
@@ -209,6 +223,15 @@
   }
   canvas{max-width:100%;}
 
+  .anim-block{margin-top:18px; padding-top:14px; border-top:1px dashed var(--border-soft);}
+  .anim-block > label{display:block; font-size:0.78rem; color:var(--text-faint); margin-bottom:6px; font-family:var(--mono);}
+  .anim-block input[type=range]{
+    width:100%; accent-color:var(--gold); height:6px; cursor:pointer;
+  }
+  .anim-row{display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-top:14px;}
+  .anim-row .field{width:100px;}
+  .elab-live{font-family:var(--mono); font-size:0.9rem; color:var(--gold-deep); margin-left:4px;}
+
   .level-diagram{width:100%; height:auto; margin-top:12px;}
 
   footer{
@@ -241,7 +264,7 @@
         <h1>Wan Aishah Harun</h1>
         <div class="role">PhD, Nuclear Astrophysics</div>
         <p class="bio">
-          I study how the elements are forged inside massive stars — modelling nucleosynthesis,
+          I study how the elements are forged inside massive stars with nucleosynthesis modelling,
           convective shell burning, and the shell mergers that reshape a star's structure in the
           final years before core collapse. My work sits between nuclear reaction physics and
           stellar evolution: the reaction rates set deep in a star's interior, and what they mean
@@ -294,13 +317,13 @@
   <section class="panel" id="panel-research">
     <h2>Research</h2>
     <p class="lede">Nuclear astrophysics at the interface of reaction physics and stellar structure — how
-      individual reactions add up to the life, and death, of a massive star.</p>
+      nuclear reactions add up to the life, and death, of a massive star.</p>
 
     <div class="research-grid">
       <div class="card">
         <h3>Nucleosynthesis</h3>
         <p>Tracking how successive burning stages build up the elements, from hydrogen fusion
-           through to the iron-group nuclei formed just before core collapse.</p>
+           through to the iron-group nuclei formed up to the core collapse.</p>
       </div>
       <div class="card">
         <h3>Massive stars</h3>
@@ -330,9 +353,8 @@
     <h2>Nuclear Reaction Toolkit</h2>
     <p class="tk-intro lede">
       Set up a two-body reaction — projectile, target, ejectile — and the recoil is worked out
-      automatically from charge and mass conservation. Everything below (Q-value, Coulomb barrier,
-      Gamow energies, Maxwell–Boltzmann and Gamow-peak curves, and reaction kinematics) is computed
-      live in your browser from a table of 3,180 isotope masses.
+      automatically from charge and mass conservation. The module computes the astrophysical reaction first, then the experimental picture with animation. Have Fun!
+      
     </p>
 
     <div class="tk-grid">
@@ -340,7 +362,7 @@
       <!-- Setup -->
       <div class="panel-card">
         <h3>Reaction setup</h3>
-        <div class="hint">Type an isotope like "He-4", "Ne-20", or "gamma" and pick from the list.</div>
+        <div class="hint">Type an isotope like "He-4", "N-14", or "gamma" and pick from the list.</div>
         <div class="form-row">
           <div class="field">
             <label for="in-proj">Projectile</label>
@@ -352,14 +374,14 @@
           <div class="field">
             <label for="in-targ">Target</label>
             <div class="ac-wrap">
-              <input type="text" id="in-targ" autocomplete="off" placeholder="e.g. Ne-20">
+              <input type="text" id="in-targ" autocomplete="off" placeholder="e.g. N-14">
               <div class="ac-list" id="ac-targ"></div>
             </div>
           </div>
           <div class="field">
             <label for="in-ejec">Ejectile</label>
             <div class="ac-wrap">
-              <input type="text" id="in-ejec" autocomplete="off" placeholder="e.g. gamma">
+              <input type="text" id="in-ejec" autocomplete="off" placeholder="e.g. H-1">
               <div class="ac-list" id="ac-ejec"></div>
             </div>
           </div>
@@ -375,6 +397,21 @@
         </div>
       </div>
 
+      <!-- ============== REACTION (astrophysical) ============== -->
+      <div class="section-divider"><h2>Reaction</h2>
+        <div class="note-box">
+          <p><strong>Astrophysical reaction of interest:</strong><br>
+             Projectile <em>a</em> + Target <em>X</em> → Ejectile <em>Y</em> + Recoil <em>b</em></p>
+          <p>For each reaction we compute mass <var>m</var> (amu), mass–energy <var>mc²</var> (MeV),
+             mass excess <var>Δ</var> (MeV), the reaction <var>Q</var>-value, the Coulomb barrier, and
+             the Gamow peak energy <var>E<sub>0</sub></var>, width <var>ΔE<sub>0</sub></var>, and Gamow energy <var>E<sub>G</sub></var>.</p>
+          <p class="formula"><strong>Q-value</strong> (mass excesses for neutral atoms):<br>
+             Q = Σ Δᵢ (initial) − Σ Δ<sub>f</sub> (final) &nbsp;[MeV]</p>
+          <p class="formula"><strong>Coulomb barrier</strong>:<br>
+             V<sub>C</sub> ≈ 1.44 · Z₁Z₂ / r &nbsp;[MeV], &nbsp; r ≈ r₀(∛A₁ + ∛A₂) &nbsp;[fm], &nbsp; r₀ ≈ 1.3 fm</p>
+        </div>
+      </div>
+
       <!-- Results -->
       <div class="panel-card" id="results-card" style="display:none;">
         <h3>Masses &amp; energetics</h3>
@@ -385,43 +422,67 @@
           <tbody id="mass-table-body"></tbody>
         </table>
 
+        <div class="hint" style="margin-top:12px;">Coulomb radius r<sub>0</sub> =
+          <input type="number" id="in-r0" value="1.3" step="0.05" min="0.5" style="width:70px; display:inline-block; padding:4px 6px; font-size:0.85rem;">
+          fm — recomputed automatically.
+        </div>
         <div class="stat-grid" id="stat-grid"></div>
 
+        <div class="hint" style="margin-top:16px;">Level diagram — the shaded band marks the Gamow window ΔE<sub>0</sub> around E<sub>0</sub>.</div>
         <svg class="level-diagram" id="level-diagram" viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg"></svg>
       </div>
 
       <!-- Curves -->
       <div class="panel-card" id="curves-card" style="display:none;">
-        <h3>Reaction curves</h3>
-        <div class="hint">Coulomb radius r<sub>0</sub> =
-          <input type="number" id="in-r0" value="1.3" step="0.05" min="0.5" style="width:70px; display:inline-block; padding:4px 6px; font-size:0.85rem;">
-          fm — recomputed automatically.
+        <h3>The fusion probability</h3>
+        <p class="hint">Maxwell–Boltzmann distribution, Coulomb-barrier penetrability (× P), and the
+          Gamow curve (× S) — all three in one figure, linear energy axis, so you can see how the
+          Gamow peak sits at the overlap of a falling Boltzmann tail and a rising penetrability.</p>
+        <div class="form-row" style="grid-template-columns:repeat(4,1fr); margin-bottom:10px;">
+          <div class="field"><label for="in-P">Penetrability scale P</label><input type="number" id="in-P" step="any"></div>
+          <div class="field"><label for="in-S">Gamow curve scale S</label><input type="number" id="in-S" step="any"></div>
+          <div class="field" style="align-self:end;">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+              <input type="checkbox" id="in-logy" checked style="width:auto; accent-color:var(--gold);"> log y-axis
+            </label>
+          </div>
+          <div class="field" style="align-self:end;">
+            <button class="btn" id="btn-reset-ps">Reset P/S to auto</button>
+          </div>
         </div>
-        <div class="chart-grid">
+        <div class="form-row" style="grid-template-columns:repeat(4,1fr); margin-bottom:10px;">
+          <div class="field"><label for="in-xmin">X min <span style="opacity:0.6;">(blank = auto)</span></label><input type="number" id="in-xmin" step="any" placeholder="auto"></div>
+          <div class="field"><label for="in-xmax">X max <span style="opacity:0.6;">(blank = auto)</span></label><input type="number" id="in-xmax" step="any" placeholder="auto"></div>
+          <div class="field"><label for="in-ymin">Y min <span style="opacity:0.6;">(blank = auto)</span></label><input type="number" id="in-ymin" step="any" placeholder="auto"></div>
+          <div class="field"><label for="in-ymax">Y max <span style="opacity:0.6;">(blank = auto)</span></label><input type="number" id="in-ymax" step="any" placeholder="auto"></div>
+        </div>
+        <div class="chart-grid" style="grid-template-columns:1fr;">
           <div class="chart-box">
-            <h4>Maxwell–Boltzmann energy distribution (T = <span id="mb-temp-label"></span> MK)</h4>
-            <canvas id="chart-mb" height="220"></canvas>
-          </div>
-          <div class="chart-box">
-            <h4>Coulomb barrier potential V(r)</h4>
-            <canvas id="chart-coulomb" height="220"></canvas>
+            <canvas id="chart-fusion" height="260"></canvas>
+            <div class="msg" id="fusion-peak-label" style="margin-top:8px;"></div>
           </div>
         </div>
-        <div class="chart-grid" style="margin-top:20px; grid-template-columns:1fr;">
-          <div class="chart-box">
-            <h4>Gamow peak — normalized reaction probability vs energy (log scale)</h4>
-            <canvas id="chart-gamow" height="180"></canvas>
-          </div>
+      </div>
+
+      <!-- ============== EXPERIMENTAL REACTION ============== -->
+      <div class="section-divider"><h2>Experimental reaction</h2>
+        <div class="note-box">
+          <p><strong>Experimental reaction:</strong><br>
+             Projectile <em>a</em> + Target <em>X</em> → Ejectile <em>Y</em> + Recoil <em>b</em></p>
+          <p class="formula"><strong>Energetics equations</strong>:<br>
+             E<sub>cm</sub> = E<sub>lab</sub> · m<sub>t</sub> / (m<sub>p</sub> + m<sub>t</sub>)<br>
+             Q<sub>eff</sub> = Q − (E<sub>x,ejectile</sub> + E<sub>x,recoil</sub>)<br>
+             E<sub>avail</sub><sup>cm</sup> = E<sub>cm</sub> + Q<sub>eff</sub></p>
         </div>
       </div>
 
       <!-- Kinematics -->
       <div class="panel-card" id="kin-card" style="display:none;">
         <h3>Reaction kinematics</h3>
-        <div class="hint">Enter a beam energy to trace the ejectile and recoil energy vs. angle.</div>
+        <div class="hint">Note: this needs two massive outgoing particles — pick a non-photon ejectile (not "gamma") to see it.</div>
         <div class="form-row" style="grid-template-columns:repeat(3,1fr);">
           <div class="field">
-            <label for="in-elab">E_lab (MeV)</label>
+            <label for="in-elab">E<sub>lab</sub> (MeV)</label>
             <input type="number" id="in-elab" value="10" step="0.5">
           </div>
           <div class="field">
@@ -434,13 +495,28 @@
           </div>
         </div>
         <div class="actions-row">
-          <button class="btn" id="btn-kinematics">Plot kinematics</button>
+          <button class="btn primary" id="btn-kinematics">Plot kinematics</button>
           <span class="msg" id="kin-msg"></span>
+        </div>
+
+        <div class="anim-block">
+          <label for="in-elab-slider">Scrub E<sub>lab</sub></label>
+          <input type="range" id="in-elab-slider" min="0" max="30" step="0.25" value="10">
+          <div class="anim-row">
+            <div class="field"><label for="in-anim-from">From (MeV)</label><input type="number" id="in-anim-from" value="0" step="0.5"></div>
+            <div class="field"><label for="in-anim-to">To (MeV)</label><input type="number" id="in-anim-to" value="30" step="0.5"></div>
+            <div class="field"><label for="in-anim-step">Step (MeV)</label><input type="number" id="in-anim-step" value="0.5" step="0.1"></div>
+            <button class="btn" id="btn-animate">▶ Animate</button>
+            <span class="elab-live" id="elab-live"></span>
+          </div>
         </div>
 
         <table class="results" id="energetics-table" style="display:none; margin-top:18px;">
           <tbody id="energetics-body"></tbody>
         </table>
+
+        <div class="hint" id="exp-diagram-hint" style="display:none; margin-top:14px;">Reaction energetics diagram — Q spans initial → final, E<sub>cm</sub> is the extra energy the beam brings in.</div>
+        <svg class="level-diagram" id="exp-diagram" viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="display:none;"></svg>
 
         <div class="chart-grid" id="kin-charts" style="display:none; margin-top:16px;">
           <div class="chart-box">
@@ -453,6 +529,7 @@
           </div>
         </div>
       </div>
+
 
     </div>
   </section>
@@ -592,39 +669,51 @@
     return {xs,ys};
   }
 
-  function coulombCurve(p,t,r0,rMaxIn){
-    const mp=massAmu(p), mt=massAmu(t);
-    const R = r0*(Math.cbrt(mp)+Math.cbrt(mt));
-    const rMax = Math.max(rMaxIn, R+0.5);
-    const n=250;
-    const xs=[], ys=[];
-    for(let i=0;i<n;i++){
-      const r = R + (rMax-R)*i/(n-1);
-      xs.push(r); ys.push(1.44*p.z*t.z/r);
-    }
-    return {xs,ys,R};
+  function reducedMassAmu(p,t){
+    const m1=massAmu(p), m2=massAmu(t);
+    if(m1==null || m2==null || (m1+m2)===0) return null;
+    return (m1*m2)/(m1+m2);
   }
 
-  function gamowPeakCurve(p,t,T_MK,Emin,Emax){
+  // Mirrors plot_probability(): Maxwell-Boltzmann, Coulomb-barrier penetrability (x P),
+  // and the Gamow curve (x S) on one linear-energy grid, plus the true peak of the
+  // integrand (found analytically, not assumed from E0).
+  function fusionProbabilityCurve(p,t,T_MK,Emax,P,S){
     const T_K = T_MK*1e6;
     const kT = K_KEV_PER_K*T_K;
-    const Eg = gamowEnergyKeV(p,t);
-    const n = 320;
-    const logMin = Math.log10(Emin), logMax = Math.log10(Emax);
-    const xs=[], ys=[];
-    let ymax = 0;
+    const Z1=p.z, Z2=t.z;
+    const muSigma = reducedMassAmu(p,t);         // real atomic masses, for tunnelling
+    const Eg = gamowEnergyKeV(p,t) || 0;          // keV
+    const K = Eg*1000;
+
+    const n = 400;
+    const xs=[], yMb=[], ySigma=[], yInt=[];
+    let peakE=null, peakY=-Infinity;
     for(let i=0;i<n;i++){
-      const logE = logMin + (logMax-logMin)*i/(n-1);
-      const E = Math.pow(10, logE);
-      const prefactor = 2*Math.sqrt(E/(Math.PI*Math.pow(kT,3)));
-      const expo = Math.exp(-(E/kT) - Math.sqrt(Math.max(Eg,0)*1000/E));
-      const y = prefactor*expo;
-      xs.push(E); ys.push(y);
-      if(y>ymax) ymax = y;
+      const E = (i===0) ? 1e-6 : Emax*i/(n-1);
+      const mb = 2*Math.sqrt(E/(Math.PI*Math.pow(kT,3)))*Math.exp(-E/(2*kT));
+      let sigma = 0;
+      if(muSigma!=null && Z1!=null && Z2!=null){
+        const twoPiEta = 31.29*Z1*Z2*Math.sqrt(muSigma/E);
+        sigma = Math.exp(-twoPiEta);
+      }
+      const pref = 2*Math.sqrt(E/(Math.PI*Math.pow(kT,3)));
+      const expo = Math.exp(-(E/kT) - Math.sqrt(K/E));
+      const integrand = pref*expo;
+
+      xs.push(E); yMb.push(mb); ySigma.push(sigma); yInt.push(integrand);
+      if(integrand>peakY){ peakY=integrand; peakE=E; }
     }
-    if(ymax>0){ for(let i=0;i<ys.length;i++) ys[i] = ys[i]/ymax; }
-    return {xs,ys};
+    // Analytic peak location of the integrand (ignoring the mild sqrt(E) prefactor),
+    // used only to pick a sensible default plotting range from the caller.
+    const analyticPeakE = (K>0) ? Math.pow((kT*Math.sqrt(K))/2, 2/3) : null;
+
+    return {xs, yMb, ySigma, yInt, peakE, peakY: peakY*(S||1), analyticPeakE,
+            sigmaMax: Math.max.apply(null, ySigma), integrandMax: Math.max.apply(null, yInt),
+            mbMax: Math.max.apply(null, yMb)};
   }
+
+
 
   function kinematics(p,t,e,r,E_lab,Ex_ej,Ex_rec,thetaStart,thetaStop){
     const mp=massAmu(p), mt=massAmu(t), me=massAmu(e), mr=massAmu(r);
@@ -677,7 +766,10 @@
     tabBtns.forEach(function(b){ b.setAttribute('aria-selected', b.dataset.panel===name ? 'true':'false'); });
     window.scrollTo({top:0, behavior:'instant' in window ? 'instant':'auto'});
   }
-  tabBtns.forEach(function(b){ b.addEventListener('click', function(){ showPanel(b.dataset.panel); }); });
+  tabBtns.forEach(function(b){ b.addEventListener('click', function(){
+    if(b.dataset.panel !== 'toolkit' && typeof stopAnimation === 'function') stopAnimation();
+    showPanel(b.dataset.panel);
+  }); });
   document.querySelectorAll('[data-goto]').forEach(function(b){
     b.addEventListener('click', function(){ showPanel(b.dataset.goto); });
   });
@@ -749,8 +841,8 @@
   attachAutocomplete('in-ejec','ac-ejec');
 
   document.getElementById('in-proj').value = 'He-4';
-  document.getElementById('in-targ').value = 'Ne-20';
-  document.getElementById('in-ejec').value = 'gamma';
+  document.getElementById('in-targ').value = 'N-14';
+  document.getElementById('in-ejec').value = 'H-1';
 
   /* ============================================================
      Compute & render
@@ -783,13 +875,19 @@
     return x.toFixed(d===undefined?3:d);
   }
 
-  function drawLevelDiagram(proj,targ,ej,rec,Q,E0_MeV){
+  function drawLevelDiagram(proj,targ,ej,rec,Q,E0_MeV,dE0_MeV){
     const svg = document.getElementById('level-diagram');
     const initLabel = isoLabel(proj) + ' + ' + isoLabel(targ);
     const finalLabel = isoLabel(ej) + ' + ' + isoLabel(rec);
     const yInit = 70, yFinal = 190, yTop = 30;
     const xL = 40, xC = 300, xR = 560;
     let svgContent = '';
+    // shaded Gamow window ΔE0, drawn first so the lines/text sit on top of it
+    if(E0_MeV!==null && dE0_MeV!==null && E0_MeV!==0){
+      const MeVtoY = (yInit - yTop) / E0_MeV;
+      const dy = 0.5 * dE0_MeV * MeVtoY;
+      svgContent += '<rect x="'+xL+'" y="'+(yTop-dy)+'" width="'+(xC-xL)+'" height="'+(2*dy)+'" fill="'+COLORS.faint+'" opacity="0.22"/>';
+    }
     svgContent += '<line x1="'+xL+'" y1="'+yInit+'" x2="'+xC+'" y2="'+yInit+'" stroke="'+COLORS.text+'" stroke-width="2"/>';
     svgContent += '<text x="'+(xL+4)+'" y="'+(yInit-10)+'" fill="'+COLORS.dim+'" font-family="IBM Plex Mono, monospace" font-size="13">'+initLabel+'</text>';
     svgContent += '<line x1="'+xC+'" y1="'+yFinal+'" x2="'+xR+'" y2="'+yFinal+'" stroke="'+COLORS.text+'" stroke-width="2"/>';
@@ -801,9 +899,42 @@
     if(E0_MeV!==null){
       svgContent += '<line x1="'+xC+'" y1="'+yTop+'" x2="'+xC+'" y2="'+yInit+'" stroke="'+COLORS.faint+'" stroke-width="1.2" stroke-dasharray="4 3"/>';
       svgContent += '<line x1="'+xL+'" y1="'+yTop+'" x2="'+xC+'" y2="'+yTop+'" stroke="'+COLORS.teal+'" stroke-width="1.4" stroke-dasharray="2 3"/>';
-      svgContent += '<text x="'+(xC+8)+'" y="'+((yInit+yTop)/2)+'" fill="'+COLORS.teal+'" font-family="IBM Plex Mono, monospace" font-size="13">E0 = '+fmt(E0_MeV,3)+' MeV</text>';
+      svgContent += '<text x="'+(xC+8)+'" y="'+((yInit+yTop)/2)+'" fill="'+COLORS.teal+'" font-family="IBM Plex Mono, monospace" font-size="13">E₀ = '+fmt(E0_MeV,3)+' MeV</text>';
+      if(dE0_MeV!==null){
+        svgContent += '<text x="'+(xL+4)+'" y="'+(yTop-8)+'" fill="'+COLORS.faint+'" font-family="IBM Plex Mono, monospace" font-size="11">ΔE₀ (shaded) = '+fmt(dE0_MeV,3)+' MeV</text>';
+      }
     }
     svg.innerHTML = svgContent;
+  }
+
+  // Mirrors the "Reaction Energetics Diagram" from compute_exp_info(): initial level
+  // (proj+targ) low-left, final level (ej+rec) spanning right, Q between them, and
+  // E_cm as the extra height the beam energy adds above the initial level.
+  function drawExpEnergeticsDiagram(proj,targ,ej,rec,Q,Ecm){
+    const svg = document.getElementById('exp-diagram');
+    const hint = document.getElementById('exp-diagram-hint');
+    if(!svg) return;
+    const initLabel = isoLabel(proj) + ' + ' + isoLabel(targ);
+    const finalLabel = isoLabel(ej) + ' + ' + isoLabel(rec);
+    const yInit = 150, yFinal = 210, yTop = 40;
+    const xL = 40, xC = 300, xR = 560;
+    let svgContent = '';
+    svgContent += '<line x1="'+xL+'" y1="'+yInit+'" x2="'+xC+'" y2="'+yInit+'" stroke="'+COLORS.text+'" stroke-width="2"/>';
+    svgContent += '<text x="'+(xL+4)+'" y="'+(yInit-10)+'" fill="'+COLORS.dim+'" font-family="IBM Plex Mono, monospace" font-size="13">'+initLabel+'</text>';
+    svgContent += '<line x1="'+xC+'" y1="'+yFinal+'" x2="'+xR+'" y2="'+yFinal+'" stroke="'+COLORS.text+'" stroke-width="2"/>';
+    svgContent += '<text x="'+(xC+4)+'" y="'+(yFinal+22)+'" fill="'+COLORS.dim+'" font-family="IBM Plex Mono, monospace" font-size="13">'+finalLabel+'</text>';
+    svgContent += '<line x1="'+xC+'" y1="'+yInit+'" x2="'+xC+'" y2="'+yFinal+'" stroke="'+COLORS.faint+'" stroke-width="1.2" stroke-dasharray="4 3"/>';
+    if(Q!==null){
+      svgContent += '<text x="'+(xC+8)+'" y="'+((yInit+yFinal)/2)+'" fill="'+COLORS.gold+'" font-family="IBM Plex Mono, monospace" font-size="13">Q = '+fmt(Q,3)+' MeV</text>';
+    }
+    if(Ecm!==null){
+      svgContent += '<line x1="'+xC+'" y1="'+yTop+'" x2="'+xC+'" y2="'+yInit+'" stroke="'+COLORS.faint+'" stroke-width="1.2" stroke-dasharray="4 3"/>';
+      svgContent += '<line x1="'+xL+'" y1="'+yTop+'" x2="'+xC+'" y2="'+yTop+'" stroke="'+COLORS.teal+'" stroke-width="1.4" stroke-dasharray="2 3"/>';
+      svgContent += '<text x="'+(xC+8)+'" y="'+((yInit+yTop)/2)+'" fill="'+COLORS.teal+'" font-family="IBM Plex Mono, monospace" font-size="13">E<tspan baseline-shift="sub" font-size="70%">cm</tspan> = '+fmt(Ecm,3)+' MeV</text>';
+    }
+    svg.innerHTML = svgContent;
+    svg.style.display = '';
+    if(hint) hint.style.display = '';
   }
 
   function runCompute(){
@@ -853,16 +984,16 @@
 
     const stats = [
       ['Q-value', fmt(Q,3), 'MeV'],
-      ['Coulomb barrier V_c', fmt(cb.Vc,3), 'MeV'],
-      ['Gamow peak E0', E0===null?'N/A':fmt(E0,2), 'keV'],
-      ['Gamow window ΔE0', dE0===null?'N/A':fmt(dE0,2), 'keV'],
-      ['Gamow energy E_G', EG===null?'N/A':fmt(EG,1), 'keV']
+      ['Coulomb barrier V<sub>c</sub>', fmt(cb.Vc,3), 'MeV'],
+      ['Gamow peak E₀', E0===null?'N/A':fmt(E0,2), 'keV'],
+      ['Gamow window ΔE₀', dE0===null?'N/A':fmt(dE0,2), 'keV'],
+      ['Gamow energy E<sub>G</sub>', EG===null?'N/A':fmt(EG,1), 'keV']
     ];
     document.getElementById('stat-grid').innerHTML = stats.map(function(s){
       return '<div class="stat"><div class="label">'+s[0]+'</div><div class="value">'+s[1]+'<span class="unit">'+s[2]+'</span></div></div>';
     }).join('');
 
-    drawLevelDiagram(p,t,e,r,Q, E0===null?null:E0/1000.0);
+    drawLevelDiagram(p,t,e,r,Q, E0===null?null:E0/1000.0, dE0===null?null:dE0/1000.0);
 
     document.getElementById('results-card').style.display = '';
     document.getElementById('curves-card').style.display = '';
@@ -873,106 +1004,155 @@
 
   function renderCurves(){
     if(!session) return;
-    const {p,t,T_MK} = session;
-    const r0 = parseFloat(document.getElementById('in-r0').value) || 1.3;
-    document.getElementById('mb-temp-label').textContent = T_MK;
+    renderFusionProbability(true);
+  }
 
-    // Maxwell-Boltzmann
+  // Mirrors plot_probability(): Maxwell-Boltzmann + Coulomb-barrier penetrability (x P) +
+  // Gamow curve (x S), all on one linear-energy figure, with an optional log y-axis.
+  let fusionAutoRange = null;
+  function renderFusionProbability(recomputeDefaults){
+    if(!session) return;
+    const {p,t,T_MK} = session;
+    const peakLabel = document.getElementById('fusion-peak-label');
+    if(isGamma(p) || isGamma(t)){
+      destroyChart('fusion');
+      peakLabel.textContent = 'The Coulomb barrier / Gamow picture only applies when both projectile and target are massive (not a photon).';
+      return;
+    }
+
+    // Pick a display range wide enough to show the true peak of the Gamow curve,
+    // found analytically rather than assumed equal to E0 (they can differ quite a bit) —
+    // unless the person has set an explicit X max, in which case honor that instead.
+    const xminRaw = document.getElementById('in-xmin').value.trim();
+    const xmaxRaw = document.getElementById('in-xmax').value.trim();
+    let xMin = xminRaw==='' ? undefined : parseFloat(xminRaw);
+    let xMax = xmaxRaw==='' ? undefined : parseFloat(xmaxRaw);
+    if(xMin!==undefined && !isFinite(xMin)) xMin = undefined;
+    if(xMax!==undefined && !isFinite(xMax)) xMax = undefined;
+    if(xMin!==undefined && xMax!==undefined && xMin>=xMax){
+      peakLabel.textContent = 'X min must be less than X max — ignoring both.';
+      xMin = undefined; xMax = undefined;
+    }
+
+    let Emax = 5000;
+    const probe = fusionProbabilityCurve(p,t,T_MK, 5000, 1, 1);
+    if(probe.analyticPeakE && isFinite(probe.analyticPeakE)){
+      Emax = Math.max(5000, probe.analyticPeakE*3);
+    }
+    if(xMax!==undefined && xMax>0) Emax = xMax;
+
+    const curve = fusionProbabilityCurve(p,t,T_MK, Emax, 1, 1);
+
+    if(recomputeDefaults){
+      const pIn = document.getElementById('in-P');
+      const sIn = document.getElementById('in-S');
+      const mbPeak = curve.mbMax || 1e-6;
+      const defaultP = curve.sigmaMax>0 ? mbPeak/curve.sigmaMax : 1;
+      const defaultS = curve.integrandMax>0 ? mbPeak/curve.integrandMax : 1;
+      pIn.value = defaultP.toExponential(3);
+      sIn.value = defaultS.toExponential(3);
+      fusionAutoRange = Emax;
+    }
+
+    const P = parseFloat(document.getElementById('in-P').value) || 1;
+    const S = parseFloat(document.getElementById('in-S').value) || 1;
+    const logy = document.getElementById('in-logy').checked;
+
+    const yminRaw = document.getElementById('in-ymin').value.trim();
+    const ymaxRaw = document.getElementById('in-ymax').value.trim();
+    let yMin = yminRaw==='' ? undefined : parseFloat(yminRaw);
+    let yMax = ymaxRaw==='' ? undefined : parseFloat(ymaxRaw);
+    if(yMin!==undefined && !isFinite(yMin)) yMin = undefined;
+    if(yMax!==undefined && !isFinite(yMax)) yMax = undefined;
+    if(logy && yMin!==undefined && yMin<=0){
+      peakLabel.textContent = 'Y min must be > 0 on a log axis — ignoring it.';
+      yMin = undefined;
+    }
+
+    const mask = function(y){ return (logy && !(y>0)) ? NaN : y; };
+    const ptsMb    = curve.xs.map(function(x,i){ return {x:x, y:mask(curve.yMb[i])}; });
+    const ptsSigma = curve.xs.map(function(x,i){ return {x:x, y:mask(curve.ySigma[i]*P)}; });
+    const ptsInt   = curve.xs.map(function(x,i){ return {x:x, y:mask(curve.yInt[i]*S)}; });
+
     try{
-      const mb = maxwellBoltzCurve(T_MK, 5000);
-      destroyChart('mb');
-      charts.mb = new Chart(document.getElementById('chart-mb'), {
+      destroyChart('fusion');
+      const yScale = {type: logy?'logarithmic':'linear', title:{display:true,text:'Relative probability',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}};
+      if(yMin!==undefined) yScale.min = yMin;
+      if(yMax!==undefined) yScale.max = yMax;
+      const xScale = {type:'linear', min:(xMin!==undefined?xMin:0), max:Emax, title:{display:true,text:'Energy (keV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}};
+      charts.fusion = new Chart(document.getElementById('chart-fusion'), {
         type:'line',
-        data:{ labels: mb.xs.map(function(x){return x.toFixed(0);}),
-          datasets:[{label:'f(E)', data:mb.ys, borderColor:COLORS.gold, backgroundColor:'transparent', pointRadius:0, borderWidth:2, tension:0.15}]},
+        data:{ datasets:[
+          {label:'Maxwell–Boltzmann distribution', data:ptsMb, borderColor:COLORS.gold, backgroundColor:'transparent', pointRadius:0, borderWidth:2},
+          {label:'Coulomb-barrier penetrability × P', data:ptsSigma, borderColor:COLORS.teal, backgroundColor:'transparent', pointRadius:0, borderWidth:2, borderDash:[6,3]},
+          {label:'Gamow curve × S', data:ptsInt, borderColor:COLORS.coral, backgroundColor:'rgba(143,47,20,0.12)', fill:true, pointRadius:0, borderWidth:2, borderDash:[3,2]}
+        ]},
         options: baseChartOptions({
           scales:{
-            x:{title:{display:true,text:'Energy (keV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint, maxTicksLimit:6}},
-            y:{title:{display:true,text:'Arbitrary units',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
+            x:xScale,
+            y:yScale
           }
         })
       });
-    } catch(err){
-      console.error('Maxwell-Boltzmann chart failed:', err);
-      document.getElementById('chart-mb').closest('.chart-box').insertAdjacentHTML('beforeend',
-        '<div class="msg warn">Chart failed to render: '+err.message+'</div>');
-    }
-
-    // Coulomb potential
-    try{
-      if(!isGamma(p) && !isGamma(t) && p.z!=null && t.z!=null){
-        const cc = coulombCurve(p,t,r0,20);
-        destroyChart('coulomb');
-        charts.coulomb = new Chart(document.getElementById('chart-coulomb'), {
-          type:'line',
-          data:{ labels: cc.xs.map(function(x){return x.toFixed(1);}),
-            datasets:[{label:'V(r)', data:cc.ys, borderColor:COLORS.teal, backgroundColor:'transparent', pointRadius:0, borderWidth:2}]},
-          options: baseChartOptions({
-            scales:{
-              x:{title:{display:true,text:'r (fm)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint, maxTicksLimit:6}},
-              y:{title:{display:true,text:'V(r) (MeV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
-            }
-          })
-        });
-      } else {
-        destroyChart('coulomb');
-        document.getElementById('chart-coulomb').getContext('2d').clearRect(0,0,9999,9999);
+      const E0 = e0KeV(p,t,T_MK);
+      let dE0 = null;
+      if(E0!==null && p.z!=null && t.z!=null && p.a!=null && t.a!=null){
+        const mu = (p.a*t.a)/(p.a+t.a);
+        dE0 = gamowWindowWidth(p.z,t.z,mu,T_MK);
       }
+      peakLabel.innerHTML = 'Gamow-curve peak at E ≈ '+fmt(curve.peakE,1)+' keV'
+        + (E0!==null ? '  (E<sub>0</sub> estimate ≈ '+fmt(E0,1)+' keV, ΔE<sub>0</sub> ≈ '+(dE0===null?'N/A':fmt(dE0,1))+' keV)' : '');
     } catch(err){
-      console.error('Coulomb chart failed:', err);
-      document.getElementById('chart-coulomb').closest('.chart-box').insertAdjacentHTML('beforeend',
-        '<div class="msg warn">Chart failed to render: '+err.message+'</div>');
-    }
-
-    // Gamow peak — use a wide log range (matches the original tool's defaults) so the
-    // peak is always captured regardless of where it falls; the exponent in this curve
-    // can put the true maximum well above the E0 estimate shown in the stats above.
-    try{
-      if(!isGamma(p) && !isGamma(t)){
-        const gp = gamowPeakCurve(p,t,T_MK,1,1e5);
-        destroyChart('gamow');
-        charts.gamow = new Chart(document.getElementById('chart-gamow'), {
-          type:'line',
-          data:{ labels: gp.xs.map(function(x){return x.toFixed(1);}),
-            datasets:[{label:'Gamow peak (normalized)', data:gp.ys, borderColor:COLORS.coral, backgroundColor:'rgba(143,47,20,0.12)', fill:true, pointRadius:0, borderWidth:2}]},
-          options: baseChartOptions({
-            scales:{
-              x:{type:'logarithmic', title:{display:true,text:'Energy (keV, log)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}},
-              y:{title:{display:true,text:'Normalized probability',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
-            }
-          })
-        });
-      } else {
-        destroyChart('gamow');
-      }
-    } catch(err){
-      console.error('Gamow peak chart failed:', err);
-      document.getElementById('chart-gamow').closest('.chart-box').insertAdjacentHTML('beforeend',
-        '<div class="msg warn">Chart failed to render: '+err.message+'</div>');
+      console.error('Fusion probability chart failed:', err);
+      peakLabel.textContent = 'Chart failed to render: '+err.message;
     }
   }
 
+  document.getElementById('in-P').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-S').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-xmin').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-xmax').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-ymin').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-ymax').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('in-logy').addEventListener('change', function(){ renderFusionProbability(false); });
+  document.getElementById('btn-reset-ps').addEventListener('click', function(){ renderFusionProbability(true); });
+
   document.getElementById('btn-compute').addEventListener('click', runCompute);
-  document.getElementById('in-r0').addEventListener('change', renderCurves);
+  document.getElementById('in-r0').addEventListener('change', function(){ if(session) runCompute(); });
   document.getElementById('in-temp').addEventListener('change', function(){ if(session) runCompute(); });
 
+  function hideExpDiagram(){
+    const svg = document.getElementById('exp-diagram');
+    const hint = document.getElementById('exp-diagram-hint');
+    if(svg) svg.style.display = 'none';
+    if(hint) hint.style.display = 'none';
+  }
+
   /* ---------- Kinematics ---------- */
-  document.getElementById('btn-kinematics').addEventListener('click', function(){
+  function runKinematicsFor(E_lab, Ex_ej, Ex_rec){
     const msg = document.getElementById('kin-msg');
     if(!session){
       msg.textContent = 'Compute a reaction above first.';
       msg.classList.add('warn');
       return;
     }
-    const E_lab = parseFloat(document.getElementById('in-elab').value);
-    const Ex_ej = parseFloat(document.getElementById('in-exej').value) || 0;
-    const Ex_rec = parseFloat(document.getElementById('in-exrec').value) || 0;
     if(!isFinite(E_lab) || E_lab<0){
       msg.textContent = 'Enter a non-negative beam energy.';
       msg.classList.add('warn');
       return;
     }
     const {p,t,e,r} = session;
+
+    if(isGamma(e) || isGamma(r)){
+      msg.textContent = 'The ejectile (or recoil) is a photon — this two-body angle/energy formalism only applies to reactions with two massive outgoing particles. Pick a different ejectile above (e.g. a proton or alpha reaction).';
+      msg.classList.add('warn');
+      document.getElementById('energetics-table').style.display='none';
+      document.getElementById('kin-charts').style.display='none';
+      hideExpDiagram();
+      destroyChart('kinLab'); destroyChart('kinTheta');
+      return;
+    }
+
     const res = kinematics(p,t,e,r,E_lab,Ex_ej,Ex_rec,0,180);
 
     if(res.error){
@@ -980,26 +1160,29 @@
       msg.classList.add('warn');
       document.getElementById('energetics-table').style.display='none';
       document.getElementById('kin-charts').style.display='none';
+      hideExpDiagram();
       return;
     }
 
     const rows = [
-      ['E_lab', fmt(E_lab,4)+' MeV'],
-      ['E_cm', fmt(res.Ecm,4)+' MeV'],
+      ['E<sub>lab</sub>', fmt(E_lab,4)+' MeV'],
+      ['E<sub>cm</sub>', fmt(res.Ecm,4)+' MeV'],
       ['Q (g.s.)', fmt(res.Q,4)+' MeV'],
-      ['Ex ejectile', fmt(Ex_ej,4)+' MeV'],
-      ['Ex recoil', fmt(Ex_rec,4)+' MeV'],
-      ['Q_eff', fmt(res.Qeff,4)+' MeV'],
-      ['E_avail (c.m.)', fmt(res.Eavail,4)+' MeV']
+      ['E<sub>x,ejectile</sub>', fmt(Ex_ej,4)+' MeV'],
+      ['E<sub>x,recoil</sub>', fmt(Ex_rec,4)+' MeV'],
+      ['Q<sub>eff</sub>', fmt(res.Qeff,4)+' MeV'],
+      ['E<sub>avail</sub> (c.m.)', fmt(res.Eavail,4)+' MeV']
     ];
-    if(res.Ethr!==null) rows.push(['E_thr (lab, threshold)', fmt(res.Ethr,4)+' MeV']);
+    if(res.Ethr!==null) rows.push(['E<sub>thr</sub> (lab, threshold)', fmt(res.Ethr,4)+' MeV']);
     document.getElementById('energetics-body').innerHTML = rows.map(function(rw){
       return '<tr><td>'+rw[0]+'</td><td>'+rw[1]+'</td></tr>';
     }).join('');
     document.getElementById('energetics-table').style.display='';
+    document.getElementById('elab-live').innerHTML = 'E<sub>lab</sub> = '+E_lab.toFixed(2)+' MeV';
+    drawExpEnergeticsDiagram(p,t,e,r,res.Q,res.Ecm);
 
     if(res.closed){
-      msg.textContent = 'This channel is energetically closed at the chosen inputs — increase E_lab or reduce excitation energies.';
+      msg.innerHTML = 'This channel is energetically closed at E<sub>lab</sub> = '+E_lab.toFixed(2)+' MeV — increase E<sub>lab</sub> or reduce excitation energies.';
       msg.classList.add('warn');
       document.getElementById('kin-charts').style.display='none';
       destroyChart('kinLab'); destroyChart('kinTheta');
@@ -1009,39 +1192,118 @@
     msg.classList.remove('warn');
     document.getElementById('kin-charts').style.display='';
 
-    destroyChart('kinLab');
-    charts.kinLab = new Chart(document.getElementById('chart-kin-lab'), {
-      type:'scatter',
-      data:{ datasets:[
-        {label:'Ejectile E3', data: res.A3lab.map(function(x,i){return {x:x,y:res.E3[i]};}).filter(function(pt){return isFinite(pt.y);}),
-          borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
-        {label:'Recoil E4', data: res.A4lab.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);}),
-          borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
-      ]},
-      options: baseChartOptions({
-        scales:{
-          x:{title:{display:true,text:'Angle (deg, lab)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}},
-          y:{title:{display:true,text:'Energy (MeV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
-        }
-      })
-    });
+    const labData3 = res.A3lab.map(function(x,i){return {x:x,y:res.E3[i]};}).filter(function(pt){return isFinite(pt.y);});
+    const labData4 = res.A4lab.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);});
+    const thData3 = res.thetas.map(function(x,i){return {x:x,y:res.E3[i]};}).filter(function(pt){return isFinite(pt.y);});
+    const thData4 = res.thetas.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);});
 
-    destroyChart('kinTheta');
-    charts.kinTheta = new Chart(document.getElementById('chart-kin-theta'), {
-      type:'scatter',
-      data:{ datasets:[
-        {label:'Ejectile E3', data: res.thetas.map(function(x,i){return {x:x,y:res.E3[i]};}).filter(function(pt){return isFinite(pt.y);}),
-          borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
-        {label:'Recoil E4', data: res.thetas.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);}),
-          borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
-      ]},
-      options: baseChartOptions({
-        scales:{
-          x:{title:{display:true,text:'θ c.m. (deg)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}},
-          y:{title:{display:true,text:'Energy (MeV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
-        }
-      })
-    });
+    try{
+      if(charts.kinLab){
+        charts.kinLab.data.datasets[0].data = labData3;
+        charts.kinLab.data.datasets[1].data = labData4;
+        charts.kinLab.update('none');
+      } else {
+        charts.kinLab = new Chart(document.getElementById('chart-kin-lab'), {
+          type:'scatter',
+          data:{ datasets:[
+            {label:'Ejectile E3', data: labData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
+            {label:'Recoil E4', data: labData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
+          ]},
+          options: baseChartOptions({
+            animation:{duration:0},
+            scales:{
+              x:{title:{display:true,text:'Angle (deg, lab)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}},
+              y:{title:{display:true,text:'Energy (MeV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
+            }
+          })
+        });
+      }
+
+      if(charts.kinTheta){
+        charts.kinTheta.data.datasets[0].data = thData3;
+        charts.kinTheta.data.datasets[1].data = thData4;
+        charts.kinTheta.update('none');
+      } else {
+        charts.kinTheta = new Chart(document.getElementById('chart-kin-theta'), {
+          type:'scatter',
+          data:{ datasets:[
+            {label:'Ejectile E3', data: thData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
+            {label:'Recoil E4', data: thData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
+          ]},
+          options: baseChartOptions({
+            animation:{duration:0},
+            scales:{
+              x:{title:{display:true,text:'θ c.m. (deg)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}},
+              y:{title:{display:true,text:'Energy (MeV)',color:COLORS.faint}, grid:{color:COLORS.grid}, ticks:{color:COLORS.faint}}
+            }
+          })
+        });
+      }
+    } catch(err){
+      console.error('Kinematics chart failed:', err);
+      msg.textContent = 'Chart failed to render: '+err.message;
+      msg.classList.add('warn');
+    }
+  }
+
+  document.getElementById('btn-kinematics').addEventListener('click', function(){
+    const E_lab = parseFloat(document.getElementById('in-elab').value);
+    const Ex_ej = parseFloat(document.getElementById('in-exej').value) || 0;
+    const Ex_rec = parseFloat(document.getElementById('in-exrec').value) || 0;
+    if(isFinite(E_lab)) document.getElementById('in-elab-slider').value = E_lab;
+    runKinematicsFor(E_lab, Ex_ej, Ex_rec);
+  });
+
+  document.getElementById('in-elab-slider').addEventListener('input', function(){
+    const E_lab = parseFloat(this.value);
+    document.getElementById('in-elab').value = E_lab.toFixed(2);
+    const Ex_ej = parseFloat(document.getElementById('in-exej').value) || 0;
+    const Ex_rec = parseFloat(document.getElementById('in-exrec').value) || 0;
+    runKinematicsFor(E_lab, Ex_ej, Ex_rec);
+  });
+
+  /* ---------- Animation (mirrors make_kinematic_movie, but live) ---------- */
+  let animTimer = null;
+  function stopAnimation(){
+    if(animTimer){ clearInterval(animTimer); animTimer = null; }
+    const btn = document.getElementById('btn-animate');
+    if(btn) btn.textContent = '▶ Animate';
+  }
+  function setElab(E){
+    document.getElementById('in-elab').value = E.toFixed(2);
+    document.getElementById('in-elab-slider').value = E;
+    const Ex_ej = parseFloat(document.getElementById('in-exej').value) || 0;
+    const Ex_rec = parseFloat(document.getElementById('in-exrec').value) || 0;
+    runKinematicsFor(E, Ex_ej, Ex_rec);
+  }
+  document.getElementById('btn-animate').addEventListener('click', function(){
+    if(animTimer){ stopAnimation(); return; }
+    if(!session){
+      const msg = document.getElementById('kin-msg');
+      msg.textContent = 'Compute a reaction above first.';
+      msg.classList.add('warn');
+      return;
+    }
+    const from = parseFloat(document.getElementById('in-anim-from').value);
+    const to = parseFloat(document.getElementById('in-anim-to').value);
+    const step = Math.max(0.05, parseFloat(document.getElementById('in-anim-step').value) || 0.5);
+    if(!isFinite(from) || !isFinite(to) || to<=from){
+      const msg = document.getElementById('kin-msg');
+      msg.textContent = 'Animate "to" must be greater than "from".';
+      msg.classList.add('warn');
+      return;
+    }
+    const slider = document.getElementById('in-elab-slider');
+    slider.min = Math.min(0, from);
+    slider.max = Math.max(parseFloat(slider.max)||30, to);
+    document.getElementById('btn-animate').textContent = '⏸ Pause';
+    let E = from;
+    setElab(E);
+    animTimer = setInterval(function(){
+      E += step;
+      if(E > to) E = from;
+      setElab(E);
+    }, 120);
   });
 
   // initial compute so the toolkit isn't empty on first visit
