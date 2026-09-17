@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wan Aishah Harun — Nuclear Astrophysics</title>
+<title>Wan Aishah Harun — 3rd Year PhD candidate (Uni. of Edinburgh), Nuclear Astrophysics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -103,6 +103,14 @@
     font-size:1.15rem; color:var(--gold-soft); margin-bottom:1.1em; font-weight:500;
   }
   .hero .bio{max-width:56ch; font-size:1.02rem;}
+  .identity-row{display:flex; align-items:center; gap:20px; margin-bottom:1.2em;}
+  .identity-row h1{margin-bottom:0.15em;}
+  .identity-row .role{margin-bottom:0;}
+  .profile-photo{
+    width:88px; height:88px; border-radius:50%; object-fit:cover; flex-shrink:0;
+    border:2px solid var(--gold); background:var(--surface-2);
+  }
+  @media (max-width:480px){ .profile-photo{width:64px; height:64px;} }
   .cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:1.6em;}
   .btn{
     appearance:none; border:1px solid var(--border); background:var(--surface);
@@ -261,14 +269,18 @@
   <section class="panel active" id="panel-home">
     <div class="hero">
       <div>
-        <h1>Wan Aishah Harun</h1>
-        <div class="role">PhD, Nuclear Astrophysics</div>
+        <div class="identity-row">
+          <img id="profile-photo" class="profile-photo" src="photo.jpg" alt="Wan Aishah Harun"
+               onerror="this.style.display='none';">
+          <div>
+            <h1>Wan Aishah Harun</h1>
+            <div class="role">PhD, Nuclear Astrophysics</div>
+          </div>
+        </div>
         <p class="bio">
-          I study how the elements are forged inside massive stars with nucleosynthesis modelling,
-          convective shell burning, and the shell mergers that reshape a star's structure in the
-          final years before core collapse. My work sits between nuclear reaction physics and
-          stellar evolution: the reaction rates set deep in a star's interior, and what they mean
-          for the star as a whole.
+          My research centres on nucleosynthesis modelling in massive stars, particularly shell
+          mergers. My primary interest is understanding the processes that create the elements
+          in the universe — and, of course, what made us!
         </p>
         <div class="cta-row">
           <button class="btn primary" data-goto="toolkit">Open the reaction toolkit</button>
@@ -317,13 +329,13 @@
   <section class="panel" id="panel-research">
     <h2>Research</h2>
     <p class="lede">Nuclear astrophysics at the interface of reaction physics and stellar structure — how
-      nuclear reactions add up to the life, and death, of a massive star.</p>
+      individual reactions add up to the life, and death, of a massive star.</p>
 
     <div class="research-grid">
       <div class="card">
         <h3>Nucleosynthesis</h3>
         <p>Tracking how successive burning stages build up the elements, from hydrogen fusion
-           through to the iron-group nuclei formed up to the core collapse.</p>
+           through to the iron-group nuclei formed just before core collapse.</p>
       </div>
       <div class="card">
         <h3>Massive stars</h3>
@@ -352,9 +364,7 @@
   <section class="panel" id="panel-toolkit">
     <h2>Nuclear Reaction Toolkit</h2>
     <p class="tk-intro lede">
-      Set up a two-body reaction — projectile, target, ejectile — and the recoil is worked out
-      automatically from charge and mass conservation. The module computes the astrophysical reaction first, then the experimental picture with animation. Have Fun!
-      
+      Set up a two-body reaction — both at stellar temperatures and as a lab experiment. Everything below is computed live in your browser: the astrophysical reaction first, then the reaction kinematics.
     </p>
 
     <div class="tk-grid">
@@ -427,6 +437,7 @@
           fm — recomputed automatically.
         </div>
         <div class="stat-grid" id="stat-grid"></div>
+        <div class="msg" id="neutron-note" style="display:none; margin-top:10px;"></div>
 
         <div class="hint" style="margin-top:16px;">Level diagram — the shaded band marks the Gamow window ΔE<sub>0</sub> around E<sub>0</sub>.</div>
         <svg class="level-diagram" id="level-diagram" viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -585,6 +596,7 @@
     return null;
   }
   function isGamma(iso){ return !!iso && String(iso.s).toLowerCase()==='gamma'; }
+  function isNeutronLike(iso){ return !!iso && !isGamma(iso) && iso.z===0; }
   function isoLabel(iso){
     if(!iso) return 'N/A';
     if(iso.stub) return '?-' + iso.a;
@@ -993,6 +1005,17 @@
       return '<div class="stat"><div class="label">'+s[0]+'</div><div class="value">'+s[1]+'<span class="unit">'+s[2]+'</span></div></div>';
     }).join('');
 
+    const neutronNote = document.getElementById('neutron-note');
+    if(isNeutronLike(p) || isNeutronLike(t)){
+      neutronNote.innerHTML = 'Projectile or target is a neutron (Z = 0), so there\'s no Coulomb barrier to tunnel through — '
+        + 'V<sub>C</sub>, E<sub>0</sub>, ΔE<sub>0</sub>, and E<sub>G</sub> are all trivially zero above. Neutron-capture rates are '
+        + 'governed by kinematics (often 1/v at low energy) or resonances, not a Gamow window.';
+      neutronNote.style.display = '';
+      neutronNote.classList.remove('warn');
+    } else {
+      neutronNote.style.display = 'none';
+    }
+
     drawLevelDiagram(p,t,e,r,Q, E0===null?null:E0/1000.0, dE0===null?null:dE0/1000.0);
 
     document.getElementById('results-card').style.display = '';
@@ -1100,8 +1123,13 @@
         const mu = (p.a*t.a)/(p.a+t.a);
         dE0 = gamowWindowWidth(p.z,t.z,mu,T_MK);
       }
-      peakLabel.innerHTML = 'Gamow-curve peak at E ≈ '+fmt(curve.peakE,1)+' keV'
-        + (E0!==null ? '  (E<sub>0</sub> estimate ≈ '+fmt(E0,1)+' keV, ΔE<sub>0</sub> ≈ '+(dE0===null?'N/A':fmt(dE0,1))+' keV)' : '');
+      if(isNeutronLike(p) || isNeutronLike(t)){
+        peakLabel.innerHTML = 'Projectile or target is a neutron — there\'s no Coulomb barrier, so the penetrability curve '
+          + 'is flat at 1 and the "Gamow curve" here is just the plain Boltzmann tail (no Gamow peak).';
+      } else {
+        peakLabel.innerHTML = 'Gamow-curve peak at E ≈ '+fmt(curve.peakE,1)+' keV'
+          + (E0!==null ? '  (E<sub>0</sub> estimate ≈ '+fmt(E0,1)+' keV, ΔE<sub>0</sub> ≈ '+(dE0===null?'N/A':fmt(dE0,1))+' keV)' : '');
+      }
     } catch(err){
       console.error('Fusion probability chart failed:', err);
       peakLabel.textContent = 'Chart failed to render: '+err.message;
@@ -1196,18 +1224,22 @@
     const labData4 = res.A4lab.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);});
     const thData3 = res.thetas.map(function(x,i){return {x:x,y:res.E3[i]};}).filter(function(pt){return isFinite(pt.y);});
     const thData4 = res.thetas.map(function(x,i){return {x:x,y:res.E4[i]};}).filter(function(pt){return isFinite(pt.y);});
+    const ejLabel = isoLabel(e) + ' (ejectile, E3)';
+    const recLabel = isoLabel(r) + ' (recoil, E4)';
 
     try{
       if(charts.kinLab){
+        charts.kinLab.data.datasets[0].label = ejLabel;
         charts.kinLab.data.datasets[0].data = labData3;
+        charts.kinLab.data.datasets[1].label = recLabel;
         charts.kinLab.data.datasets[1].data = labData4;
         charts.kinLab.update('none');
       } else {
         charts.kinLab = new Chart(document.getElementById('chart-kin-lab'), {
           type:'scatter',
           data:{ datasets:[
-            {label:'Ejectile E3', data: labData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
-            {label:'Recoil E4', data: labData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
+            {label:ejLabel, data: labData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
+            {label:recLabel, data: labData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
           ]},
           options: baseChartOptions({
             animation:{duration:0},
@@ -1220,15 +1252,17 @@
       }
 
       if(charts.kinTheta){
+        charts.kinTheta.data.datasets[0].label = ejLabel;
         charts.kinTheta.data.datasets[0].data = thData3;
+        charts.kinTheta.data.datasets[1].label = recLabel;
         charts.kinTheta.data.datasets[1].data = thData4;
         charts.kinTheta.update('none');
       } else {
         charts.kinTheta = new Chart(document.getElementById('chart-kin-theta'), {
           type:'scatter',
           data:{ datasets:[
-            {label:'Ejectile E3', data: thData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
-            {label:'Recoil E4', data: thData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
+            {label:ejLabel, data: thData3, borderColor:COLORS.gold, backgroundColor:COLORS.gold, showLine:true, pointRadius:0, borderWidth:2},
+            {label:recLabel, data: thData4, borderColor:COLORS.teal, backgroundColor:COLORS.teal, showLine:true, pointRadius:0, borderWidth:2}
           ]},
           options: baseChartOptions({
             animation:{duration:0},
